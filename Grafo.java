@@ -1,10 +1,23 @@
+// Ana Carolina da Silva
+import java.util.HashSet;
+
 public class Grafo {
 
-    int grafo[][] = new int[1][1];
+    int grafo[][] = new int[3][3];
 
     public Grafo(){
 
         grafo[0][0] = 1;
+        grafo[0][1] = 1;
+        grafo[0][2] = 1;
+
+        grafo[1][0] = 1;
+        grafo[1][1] = 0;
+        grafo[1][2] = 0;
+
+        grafo[2][0] = 0;
+        grafo[2][1] = 1;
+        grafo[2][2] = 0;
 
         System.out.println("GRAU: " + grausDoVertice(grafo));
         System.out.println("=================================================");
@@ -14,10 +27,6 @@ public class Grafo {
 
         System.out.println("ARESTAS: \n" + arestasDoGrafo(grafo));
 
-    }
-
-    private int getQtdVertices(){
-        return grafo.length;
     }
 
     private String tipoDoGrafo(int grafo[][]){
@@ -44,9 +53,9 @@ public class Grafo {
             tipoDoGrafo += "-completo \n";
         }
 
-        //if(ehBipartido()){
-            //tipoDoGrafo += "completo, ";
-        //}
+        if(ehBipartido(grafo)){
+            tipoDoGrafo += "-bipartido \n";
+        }
         return tipoDoGrafo;
 
 
@@ -60,9 +69,10 @@ public class Grafo {
             for (int i= 0; i <= grafo.length - 1; i++){
                 for (int j=0; j <=grafo[i].length - 1; j++){
                     if(grafo[i][j] > 0){
-                        if(!ehDirigido && !conjuntoArestas.contains("(" + j + "," + i + ") " )){
+                        String contains = "(" + j + "," + i + ")";
+                        if(!ehDirigido && !conjuntoArestas.contains(contains)){
                             conjuntoArestas += "(" + i + "," + j + ") ";
-                        } else {
+                        } else if(ehDirigido){
                             conjuntoArestas += "(" + i + "," + j + ") ";
                         }
                         if(i == j && !ehDirigido ){
@@ -120,6 +130,7 @@ public class Grafo {
         return grausDoVertice;
     }
 
+    // métodos auxiliares
     private Boolean ehDirigido(int grafo[][]){
         Boolean ehDirigido = false;
         for (int i= 0; i <= grafo.length - 1; i++){
@@ -240,7 +251,35 @@ public class Grafo {
         return elementos;
     }
 
+    public Boolean ehBipartido(int grafo[][]){
+        HashSet<Integer> conjunto1 = new HashSet<Integer>(grafo.length);
+        HashSet<Integer> conjunto2 = new HashSet<Integer>(grafo.length);
 
+        for (int i= 0; i <= grafo.length - 1; i++){
+            for (int j=0; j <= i; j++){
+                if(grafo[i][j] > 0){
+                    if(conjunto1.contains(i) && conjunto1.contains(j)){
+                        return false;
+                    }
+                    if(conjunto2.contains(i) && conjunto2.contains(j)){
+                        return false;
+                    }
+
+                    if(conjunto1.contains(i)){
+                        conjunto2.add(i);
+                    } else {
+                        conjunto1.add(i);
+                    }
+                } else {
+                    if(!conjunto1.contains(i) && !conjunto2.contains(i)){
+                        conjunto1.add(i);
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
 
     public static void main(String[] args) {
         Grafo g = new Grafo();
